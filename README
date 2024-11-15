@@ -1,0 +1,4 @@
+How to Activate Python VM to download python libraries before coding
+    - python3 -m venv .venv: create VM
+    - source .venv/bin/activate: activate VM
+
