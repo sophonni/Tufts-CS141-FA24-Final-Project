@@ -2,3 +2,12 @@ How to Activate Python VM to download python libraries before coding
     - python3 -m venv .venv: create VM
     - source .venv/bin/activate: activate VM
 
+Image Processing
+    Gaussian Blurrred
+        Sigma Explain
+            - https://stackoverflow.com/questions/23007064/effect-of-variance-sigma-at-gaussian-smoothing
+        Kernal Size Explain
+            - Smaller kernels (e.g., 3x3): Capture fine details and are computationally efficient.
+            - Larger kernels (e.g., 5x5 or 7x7): Capture broader features and more context but are computationally more expensive.
+        Others
+            - https://learnopencv.com/edge-detection-using-opencv/

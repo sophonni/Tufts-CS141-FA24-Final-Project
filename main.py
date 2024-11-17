@@ -4,15 +4,17 @@ import math
 import cv2
 
 def main():
-    img = "img.png"
-    processor = Processor(img)
+    img = cv2.imread('img.png')
+    processor = Processor()
 
-    grayscale_img = processor.ColorToGrayscale()
+    grayscale_img = processor.ColorToGrayscale(img)
     show_img(grayscale_img)
 
     blurred_img = processor.GaussianBlur(grayscale_img)
     show_img(blurred_img)
 
+    edge_img = processor.EdgeDetection(blurred_img)
+    show_img(edge_img)
     
 
 
