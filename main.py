@@ -15,8 +15,16 @@ def main():
 
     edge_img = processor.EdgeDetection(blurred_img)
     show_img(edge_img)
-    
 
+    edge_coordinates = processor.EdgeCoordinates(edge_img)
+
+    # test tracing out detected edges
+    particle_img = img
+    show_img(particle_img)
+    for coord in edge_coordinates:
+        particle_img = processor.put_particle_at(coord, particle_img)
+    
+    show_img(particle_img)
 
     
 
