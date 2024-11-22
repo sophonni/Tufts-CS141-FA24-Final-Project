@@ -31,14 +31,14 @@ class Processor:
     
     # Purpose: Detect edges using Canny Edge Detection
     def EdgeDetection(self, img):
-        edge_img = cv2.Canny(image=img, threshold1=100, threshold2=200)
+        edge_img = cv2.Canny(image=img, threshold1=50, threshold2=150)
         return edge_img    
     
     def GetContours(self, img):
-        contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) 
+        contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE) 
         
         print("Number of Contours found = " + str(len(contours)))
-    
+        return contours
 
     # Purpose: Draw a particle at a location of the map assuming the given location is in bound of image
     def put_particle_at(self, coords, img: np.ndarray):
