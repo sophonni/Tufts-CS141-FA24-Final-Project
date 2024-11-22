@@ -35,7 +35,7 @@ class Processor:
         return edge_img    
     
     def GetContours(self, img):
-        contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE) 
+        contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) 
         
         print("Number of Contours found = " + str(len(contours)))
         return contours

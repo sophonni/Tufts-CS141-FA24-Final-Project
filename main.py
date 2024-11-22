@@ -30,7 +30,24 @@ def main():
     
 
     contours = processor.GetContours(edge_img)
-    print(contours)
+    for contour in contours:
+        epsilon = 0.03 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+
+        # Draw the original contour (blue) and the approximated contour (green)
+        cv2.drawContours(img, [contour], 0, (255, 0, 0), 2)
+        cv2.imshow("Contour",img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        
+        cv2.drawContours(img, [approx], 0, (0, 255, 0), 2)
+        cv2.imshow("Contour",img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        
+
+    # print(contours[1])
+    # print(np.shape(contours[1]))
 
     # ret,thresh=cv2.threshold(grayscale_img,200,255,cv2.THRESH_BINARY_INV)
 
