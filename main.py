@@ -4,11 +4,11 @@ import math
 import cv2
 
 def main():
-    img = cv2.imread('img.png')
+    img = cv2.imread('amg.png')
     processor = Processor()
 
     grayscale_img = processor.ColorToGrayscale(img)
-    show_img(grayscale_img)
+    show_img(grayscale_img) 
 
     blurred_img = processor.GaussianBlur(grayscale_img)
     show_img(blurred_img)
@@ -16,15 +16,30 @@ def main():
     edge_img = processor.EdgeDetection(blurred_img)
     show_img(edge_img)
 
-    edge_coordinates = processor.EdgeCoordinates(edge_img)
-
     # test tracing out detected edges
     particle_img = img
-    show_img(particle_img)
-    for coord in edge_coordinates:
-        particle_img = processor.put_particle_at(coord, particle_img)
+    height, width = np.shape(edge_img)
+
+    for r in range(height):
+        for c in range(width):
+            if edge_img[r, c] == 255:
+                coords = (c, r)
+                particle_img = processor.put_particle_at(coords, particle_img)
     
     show_img(particle_img)
+    
+
+    # contours = processor.GetContours(edge_img)
+
+    # ret,thresh=cv2.threshold(grayscale_img,200,255,cv2.THRESH_BINARY_INV)
+
+    # countours,hierarchy=cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+
+
+    # cv2.drawContours(img,countours,-1,(0,255,0),3)
+    # cv2.imshow("Contour",img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     
 
