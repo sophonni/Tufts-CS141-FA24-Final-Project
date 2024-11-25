@@ -4,7 +4,7 @@ import math
 import cv2
 
 def main():
-    img = cv2.imread('pi.png')
+    img = cv2.imread('trumpet.png')
 
     grayscale_img = Processor.ColorToGrayscale(img)
     show_img(grayscale_img) 

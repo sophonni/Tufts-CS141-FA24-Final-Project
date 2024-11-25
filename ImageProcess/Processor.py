@@ -48,7 +48,7 @@ class Processor:
         filtered_contours = []
 
         for c1 in contours:
-            if cv2.contourArea(c1) > 10:
+            if cv2.contourArea(c1) > 8:
                 is_duplicate = False
                 for c2 in filtered_contours:
                     match_value = cv2.matchShapes(c1, c2, cv2.CONTOURS_MATCH_I1, 0)
