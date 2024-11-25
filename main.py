@@ -4,34 +4,37 @@ import math
 import cv2
 
 def main():
-    img = cv2.imread('amg.png')
-    processor = Processor()
+    img = cv2.imread('pi.png')
 
-    grayscale_img = processor.ColorToGrayscale(img)
+    grayscale_img = Processor.ColorToGrayscale(img)
     show_img(grayscale_img) 
 
-    blurred_img = processor.GaussianBlur(grayscale_img)
+    adjusted_img = Processor.AdjustContrast(grayscale_img)
+    show_img(adjusted_img)
+
+    blurred_img = Processor.GaussianBlur(adjusted_img)
     show_img(blurred_img)
 
-    edge_img = processor.EdgeDetection(blurred_img)
+    edge_img = Processor.EdgeDetection(blurred_img)
     show_img(edge_img)
 
     # test tracing out detected edges
-    particle_img = img
-    height, width = np.shape(edge_img)
+    # particle_img = img
+    # height, width = np.shape(edge_img)
 
-    for r in range(height):
-        for c in range(width):
-            if edge_img[r, c] == 255:
-                coords = (c, r)
-                particle_img = processor.put_particle_at(coords, particle_img)
+    # for r in range(height):
+    #     for c in range(width):
+    #         if edge_img[r, c] == 255:
+    #             coords = (c, r)
+    #             particle_img = processor.put_particle_at(coords, particle_img)
     
-    show_img(particle_img)
+    # show_img(particle_img)
     
 
-    contours = processor.GetContours(edge_img)
-    for contour in contours:
-        epsilon = 0.03 * cv2.arcLength(contour, True)
+    contours = Processor.GetContours(edge_img)
+    filtered_contours = Processor.FilterContours(contours, 0.5, 10)
+    for contour in filtered_contours:
+        epsilon = 0.01 * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
 
         # Draw the original contour (blue) and the approximated contour (green)
@@ -58,9 +61,6 @@ def main():
     cv2.imshow("Contour",img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-    
-
 
 
 def show_img(img: np.ndarray) -> None:
