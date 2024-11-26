@@ -4,7 +4,9 @@ import math
 import cv2
 
 def main():
-    img = cv2.imread('trumpet.png')
+    img = cv2.imread('amg.png')
+    height, width, channels = img.shape
+    canvas = np.ones((height, width, channels)) * 255
 
     grayscale_img = Processor.ColorToGrayscale(img)
     show_img(grayscale_img) 
@@ -33,18 +35,21 @@ def main():
 
     contours = Processor.GetContours(edge_img)
     filtered_contours = Processor.FilterContours(contours, 0.5, 10)
-    for contour in filtered_contours:
-        epsilon = 0.01 * cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, epsilon, True)
+    approx_contours = Processor.ApproxContours(filtered_contours, 5)
+    for contour in approx_contours:
+        # print(cv2.arcLength(contour, True))
+        # epsilon = 5
+        # epsilon = 0.0001 * (cv2.arcLength(contour, True))
+        # approx = cv2.approxPolyDP(contour, epsilon, True)
 
         # Draw the original contour (blue) and the approximated contour (green)
-        cv2.drawContours(img, [contour], 0, (255, 0, 0), 2)
-        cv2.imshow("Contour",img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.drawContours(canvas, [contour], 0, (255, 0, 0), 2)
+        # cv2.imshow("Contour",canvas)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         
-        cv2.drawContours(img, [approx], 0, (0, 255, 0), 2)
-        cv2.imshow("Contour",img)
+        cv2.drawContours(canvas, [contour], 0, (0, 255, 0), 2)
+        cv2.imshow("Contour",canvas)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         
@@ -57,10 +62,10 @@ def main():
     # countours,hierarchy=cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
 
-    cv2.drawContours(img,contours,-1,(0,255,0),3)
-    cv2.imshow("Contour",img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.drawContours(img,contours,-1,(0,255,0),3)
+    # cv2.imshow("Contour",img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
 
 def show_img(img: np.ndarray) -> None:

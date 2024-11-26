@@ -65,7 +65,14 @@ class Processor:
                     filtered_contours.append(c1)
         
         return filtered_contours
+        
+    def ApproxContours(contours, threshold):
+        approx_contours = []
+
+        for c in contours:
+            approx_contours.append(cv2.approxPolyDP(c, threshold, True))
             
+        return approx_contours
 
 
     # Purpose: Draw a particle at a location of the map assuming the given location is in bound of image
