@@ -25,34 +25,17 @@ class Planner:
     
     # Given a coordinate pair and a list of contours, return the index of the contour and also the rearranged coordinates of this new contours
     def Get_Next_Contour(coords, contours):
-        # print(contours[0])
-        closest_coords = contours[0][0]
-        closest_distance = np.linalg.norm(closest_coords - coords)
+        closest_distance = np.linalg.norm(contours[0][0] - coords)
         closest_contour = contours[0]
-        # print("Closest Coord: ", closest_coords)
-        # print("Closest Distance: ", closest_distance)
-        # print("Closest Contour: ", closest_contour)
+        closest_coords_idx = 0
         for c in enumerate(contours):
-            # print("here 1")
-            for p in c:
-                # print("here 2")
+            for idx, p in enumerate(c[1]):
                 distance = np.linalg.norm(p - coords)
                 if distance < closest_distance:
-                    closest_coords = p
+                    closest_coords_idx = idx
                     closest_distance = distance
-                    closest_contour = c
-                    print("Closest Coord: ", closest_coords)
-                    print("Closest Distance: ", closest_distance)
-                    print("Closest Contour: ", closest_contour)
-                # find Euclidian distance between coords and p
-                # update curr_closest to p if Euclidian(p, c) < curr_closest
-                # update the closest contour idx as well
+                    closest_contour = c[1]
 
         # rearrange coordinate
-
-        coord_idx = np.where(closest_contour == closest_coords)
-        # print(closest_contour)
-        rearranged_contour = np.roll(closest_contour, (-1 * coord_idx))
-        # print(rearranged_contour[0])
+        rearranged_contour = np.roll(closest_contour, (-1 * closest_coords_idx), axis=0)
         return np.append(rearranged_contour, rearranged_contour[0][np.newaxis, ...], axis=0)
-    # np.append(rearranged_contour, rearranged_contour[0], axis=0)

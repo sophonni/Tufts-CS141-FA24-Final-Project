@@ -34,8 +34,11 @@ def main():
     # print(approx_contours[0][0])
 
     # Test: Find Next Contour
-    start_coord = np.array([[55, 169]])
-    # print(Planner.Get_Next_Contour(start_coord, approx_contours))
+    # start_coord = np.array([[55, 169]])
+    # start_coord = np.array([[147, 140]])
+
+    start_coord = np.array([[100, 100]])
+    print(Planner.Get_Next_Contour(start_coord, approx_contours))
 
 
 def show_img(img: np.ndarray) -> None:
