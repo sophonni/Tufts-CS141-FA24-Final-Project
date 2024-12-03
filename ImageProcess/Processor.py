@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-from numpy.typing import NDArray
-from numpy.typing import NDArray
 
 GAUSS_KERNAL_SIZE = 3
 GAUSS_SIGMA = 0

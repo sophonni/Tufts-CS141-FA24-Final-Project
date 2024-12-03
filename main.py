@@ -1,4 +1,5 @@
 from ImageProcess.Processor import Processor
+from PathPlan.Planner import Planner
 import numpy as np
 import math
 import cv2
@@ -19,53 +20,22 @@ def main():
 
     edge_img = Processor.EdgeDetection(blurred_img)
     show_img(edge_img)
-
-    # test tracing out detected edges
-    # particle_img = img
-    # height, width = np.shape(edge_img)
-
-    # for r in range(height):
-    #     for c in range(width):
-    #         if edge_img[r, c] == 255:
-    #             coords = (c, r)
-    #             particle_img = processor.put_particle_at(coords, particle_img)
     
-    # show_img(particle_img)
-    
-
+    # Test: See Drawing
     contours = Processor.GetContours(edge_img)
     filtered_contours = Processor.FilterContours(contours, 0.5, 10)
     approx_contours = Processor.ApproxContours(filtered_contours, 5)
     for contour in approx_contours:
-        # print(cv2.arcLength(contour, True))
-        # epsilon = 5
-        # epsilon = 0.0001 * (cv2.arcLength(contour, True))
-        # approx = cv2.approxPolyDP(contour, epsilon, True)
-
-        # Draw the original contour (blue) and the approximated contour (green)
-        # cv2.drawContours(canvas, [contour], 0, (255, 0, 0), 2)
-        # cv2.imshow("Contour",canvas)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-        
         cv2.drawContours(canvas, [contour], 0, (0, 255, 0), 2)
         cv2.imshow("Contour",canvas)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        
+    
+    # print(approx_contours[0][0])
 
-    # print(contours[1])
-    # print(np.shape(contours[1]))
-
-    # ret,thresh=cv2.threshold(grayscale_img,200,255,cv2.THRESH_BINARY_INV)
-
-    # countours,hierarchy=cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
-
-    # cv2.drawContours(img,contours,-1,(0,255,0),3)
-    # cv2.imshow("Contour",img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    # Test: Find Next Contour
+    start_coord = np.array([[55, 169]])
+    # print(Planner.Get_Next_Contour(start_coord, approx_contours))
 
 
 def show_img(img: np.ndarray) -> None:
