@@ -1,7 +1,6 @@
 from ImageProcess.Processor import Processor
 from PathPlan.Planner import Planner
 import numpy as np
-import math
 import cv2
 
 def main():
@@ -26,7 +25,7 @@ def main():
     filtered_contours = Processor.FilterContours(contours, 0.5, 10)
     approx_contours = Processor.ApproxContours(filtered_contours, 5)
     for contour in approx_contours:
-        print(contour.shape)
+        print(contour)
         cv2.drawContours(canvas, [contour], 0, (0, 255, 0), 2)
         cv2.imshow("Contour",canvas)
         cv2.waitKey(0)
@@ -40,7 +39,7 @@ def main():
 
     # start_coord = np.array([[100, 100]])
     # print(Planner.GetNextContour(start_coord, approx_contours))
-    print(Planner.PathPlan(approx_contours))
+    # print(Planner.PathPlan(approx_contours))
 
 
 def show_img(img: np.ndarray) -> None:
