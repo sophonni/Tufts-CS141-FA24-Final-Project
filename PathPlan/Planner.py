@@ -22,9 +22,22 @@ class Planner:
         # Take the coordinate we're currently at, compare it to all the points in all the contours
         # Choose the closest point, add that contour point by point to path, then we delete the contour
 
-    
+    def PathPlan(contours):
+        # currLen = 0
+        # bigContourIdx = 0
+        # for idx, c in enumerate(contours):
+        #     if len(c[1]) > currLen:
+        #         bigContourIdx 
+
+        longest_idx = np.argmax([c[1].shape[0] for c in contours])
+        path = contours[longest_idx]
+        np.delete(contours, longest_idx)
+        print("Contours:")
+
+        return path
+
     # Given a coordinate pair and a list of contours, return the index of the contour and also the rearranged coordinates of this new contours
-    def Get_Next_Contour(coords, contours):
+    def GetNextContour(coords, contours):
         closest_distance = np.linalg.norm(contours[0][0] - coords)
         closest_contour = contours[0]
         closest_coords_idx = 0
