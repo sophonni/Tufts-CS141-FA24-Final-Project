@@ -1,5 +1,5 @@
-from ImageProcess.Processor import Processor
-from PathPlan.Planner import Planner
+from Processor import Processor
+from Planner import Planner
 import numpy as np
 import cv2
 
