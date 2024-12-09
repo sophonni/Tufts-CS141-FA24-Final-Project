@@ -1,6 +1,6 @@
 #!/user/bin/env python
-import rospy
-from geometry_msgs.msg import Twist
+# import rospy
+# from geometry_msgs.msg import Twist
 import numpy as np
 import math
 import cv2
@@ -47,7 +47,7 @@ class Processor:
     
     @staticmethod
     def GetContours(img):
-        _, contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE) 
+        contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE) 
         
         print("Number of Contours found = " + str(len(contours)))
         return contours
@@ -118,16 +118,21 @@ class Planner:
 
     @staticmethod
     def PathPlan(contours):
-        # currLen = 0
-        # bigContourIdx = 0
-        # for idx, c in enumerate(contours):
-        #     if len(c[1]) > currLen:
-        #         bigContourIdx 
+        curr_len = 0
+        big_contour_idx = 0
+        for idx, c in enumerate(contours):
+            if c.shape[0] > curr_len:
+                big_contour_idx = idx
+        big_contour = contours[big_contour_idx]
+        init_coord = big_contour[0][0]
 
-        longest_idx = np.argmax([c[1].shape[0] for c in contours])
-        path = contours[longest_idx]
-        np.delete(contours, longest_idx)
-        print("Contours:")
+        # updated_contour_list = np.delete(contours, big_contour_idx, axis=0)
+        del contours[big_contour_idx]
+        path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
+        while len(contours) != 0:
+          next_contour = Planner.GetNextContour(init_coord, contours)
+          path = np.vstack((path, next_contour))
+          init_coord = next_contour[0][0]
 
         return path
 
@@ -135,126 +140,128 @@ class Planner:
     @staticmethod
     def GetNextContour(coords, contours):
         closest_distance = np.linalg.norm(contours[0][0] - coords)
-        closest_contour = contours[0]
+        closest_contour_idx = 0
         closest_coords_idx = 0
-        for c in enumerate(contours):
-            for idx, p in enumerate(c[1]):
+        for ci, c in enumerate(contours):
+            for pi, p in enumerate(c):
                 distance = np.linalg.norm(p - coords)
                 if distance < closest_distance:
-                    closest_coords_idx = idx
+                    closest_coords_idx = pi
                     closest_distance = distance
-                    closest_contour = c[1]
+                    closest_contour_idx = ci
 
+        
         # rearrange coordinate
-        rearranged_contour = np.roll(closest_contour, (-1 * closest_coords_idx), axis=0)
+        rearranged_contour = np.roll(contours[closest_contour_idx], (-1 * closest_coords_idx), axis=0)
+        del contours[closest_contour_idx]
         return np.append(rearranged_contour, rearranged_contour[0][np.newaxis, ...], axis=0)
     
 ####################################################################################################################################
-class Artist:
-  def __init__(self):
-    rospy.init_node('turtlebot_artist', anonymous=True)
+# class Artist:
+#   def __init__(self):
+#     rospy.init_node('turtlebot_artist', anonymous=True)
 
-    self.velocity_publisher = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size=10)
+#     self.velocity_publisher = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size=10)
 
-    # Set looping rate
-    self.rate = rospy.Rate(10)
+#     # Set looping rate
+#     self.rate = rospy.Rate(10)
 
-    self.vel_msg = Twist()
+#     self.vel_msg = Twist()
 
-    self.curr_pos = np.array([[124, 34]])
-    self.curr_angle = 0
+#     self.curr_pos = np.array([[124, 34]])
+#     self.curr_angle = 0
 
-  def MoveTurtlebot(self):
-    # # Move forward for 5 seconds
-    # self.vel_msg.linear.x = 0.2
-    # self.vel_msg.angular.z = 0.0
-    # t0 = rospy.Time.now().to_sec()
-    # while (rospy.Time.now().to_sec() - t0) < 5:
-    #   self.velocity_publisher.publish(self.vel_msg)
-    #   self.rate.sleep()
+#   def MoveTurtlebot(self):
+#     # # Move forward for 5 seconds
+#     # self.vel_msg.linear.x = 0.2
+#     # self.vel_msg.angular.z = 0.0
+#     # t0 = rospy.Time.now().to_sec()
+#     # while (rospy.Time.now().to_sec() - t0) < 5:
+#     #   self.velocity_publisher.publish(self.vel_msg)
+#     #   self.rate.sleep()
 
 
-    # # Stop the robot
-    # self.vel_msg.linear.x = 0.0
-    # self.velocity_publisher.publish(self.vel_msg)
-    # rospy.sleep(1)
+#     # # Stop the robot
+#     # self.vel_msg.linear.x = 0.0
+#     # self.velocity_publisher.publish(self.vel_msg)
+#     # rospy.sleep(1)
     
-    # Rotate for 5 seconds
-    self.vel_msg.angular.z = 3.14 * 2   # Rotate at 0.5 rad/s
-    rospy.loginfo("Rotating")
-    t0 = rospy.Time.now().to_sec()
-    while (rospy.Time.now().to_sec() - t0) < 1:
-      self.velocity_publisher.publish(self.vel_msg)
-      self.rate.sleep()
+#     # Rotate for 5 seconds
+#     self.vel_msg.angular.z = 3.14 * 2   # Rotate at 0.5 rad/s
+#     rospy.loginfo("Rotating")
+#     t0 = rospy.Time.now().to_sec()
+#     while (rospy.Time.now().to_sec() - t0) < 1:
+#       self.velocity_publisher.publish(self.vel_msg)
+#       self.rate.sleep()
 
-    # Stop the robot
-    self.vel_msg.angular.z = 0.0
-    self.velocity_publisher.publish(self.vel_msg) 
-    rospy.loginfo("Motion complete")
-
-
-  def MoveForward(self, distance):
-    rospy.loginfo("Info: Move Forward Started")
-    self.vel_msg.linear.x = 0.2
-    t0 = rospy.Time.now().to_sec()
-    while (rospy.Time.now().to_sec() - t0) < distance * DIST_SCALE:
-      self.velocity_publisher.publish(self.vel_msg)
-      self.rate.sleep()
-
-    self.StopRobot()
-    rospy.loginfo("Info: Move Forward Completed")
+#     # Stop the robot
+#     self.vel_msg.angular.z = 0.0
+#     self.velocity_publisher.publish(self.vel_msg) 
+#     rospy.loginfo("Motion complete")
 
 
-  def Rotate(self, angle_radian):
-    if angle_radian > np.pi:
-       angle_radian = -((2 * np.pi) - angle_radian)
-    elif angle_radian < (-1 * np.pi):
-       angle_radian = ((2 * np.pi) + angle_radian)
+#   def MoveForward(self, distance):
+#     rospy.loginfo("Info: Move Forward Started")
+#     self.vel_msg.linear.x = 0.2
+#     t0 = rospy.Time.now().to_sec()
+#     while (rospy.Time.now().to_sec() - t0) < distance * DIST_SCALE:
+#       self.velocity_publisher.publish(self.vel_msg)
+#       self.rate.sleep()
+
+#     self.StopRobot()
+#     rospy.loginfo("Info: Move Forward Completed")
+
+
+#   def Rotate(self, angle_radian):
+#     if angle_radian > np.pi:
+#        angle_radian = -((2 * np.pi) - angle_radian)
+#     elif angle_radian < (-1 * np.pi):
+#        angle_radian = ((2 * np.pi) + angle_radian)
        
-    rospy.loginfo("Info: Rotation Started")
-    rospy.loginfo("Info::Rotation::Curr Radian::%s", angle_radian)
-    self.vel_msg.angular.z = angle_radian * ANGLE_SCALE
-    t0 = rospy.Time.now().to_sec()
-    while (rospy.Time.now().to_sec() - t0) < 1:
-      self.velocity_publisher.publish(self.vel_msg)
-      self.rate.sleep()
+#     rospy.loginfo("Info: Rotation Started")
+#     rospy.loginfo("Info::Rotation::Curr Radian::%s", angle_radian)
+#     self.vel_msg.angular.z = angle_radian * ANGLE_SCALE
+#     t0 = rospy.Time.now().to_sec()
+#     while (rospy.Time.now().to_sec() - t0) < 1:
+#       self.velocity_publisher.publish(self.vel_msg)
+#       self.rate.sleep()
 
-    self.StopRobot()
-    rospy.loginfo("Info: Rotation Completed")
+#     self.StopRobot()
+#     rospy.loginfo("Info: Rotation Completed")
     
 
-  def StopRobot(self):
-    self.vel_msg.linear.x = 0.0
-    self.vel_msg.angular.z = 0.0
-    self.velocity_publisher.publish(self.vel_msg)
-    rospy.sleep(1)
+#   def StopRobot(self):
+#     self.vel_msg.linear.x = 0.0
+#     self.vel_msg.angular.z = 0.0
+#     self.velocity_publisher.publish(self.vel_msg)
+#     rospy.sleep(1)
 
-  def GetEuclidianDistance(self, coords_init, coords_final):
-    distance = np.linalg.norm(coords_final - coords_init)
-    return distance
+#   def GetEuclidianDistance(self, coords_init, coords_final):
+#     distance = np.linalg.norm(coords_final - coords_init)
+#     return distance
 
-  def GetRotationAngle(self, coords_init, coords_final):
-    # Calculate the angle
-    diff = coords_final - coords_init
-    angle = np.arctan2(diff[0, 1], diff[0, 0])
-    # if angle < 0:
-    #   angle += (2 * np.pi)
+#   def GetRotationAngle(self, coords_init, coords_final):
+#     # Calculate the angle
+#     diff = coords_final - coords_init
+#     angle = np.arctan2(diff[0, 1], diff[0, 0])
+#     # if angle < 0:
+#     #   angle += (2 * np.pi)
 
-    # Do angle subtraction (in radians)
-    print("Desired angle: ", angle)
-    print("Curr angle: ", self.curr_angle)
-    return angle - self.curr_angle
+#     # Do angle subtraction (in radians)
+#     print("Desired angle: ", angle)
+#     print("Curr angle: ", self.curr_angle)
+#     return angle - self.curr_angle
 
-  def Move(self, coords_final):
-    distance = self.GetEuclidianDistance(self.curr_pos, coords_final)
-    angle = self.GetRotationAngle(self.curr_pos, coords_final)
-    self.Rotate(angle)
-    self.MoveForward(distance)
-    self.curr_pos = coords_final
-    self.curr_angle += angle
+#   def Move(self, coords_final):
+#     distance = self.GetEuclidianDistance(self.curr_pos, coords_final)
+#     angle = self.GetRotationAngle(self.curr_pos, coords_final)
+#     self.Rotate(angle)
+#     self.MoveForward(distance)
+#     self.curr_pos = coords_final
+#     self.curr_angle += angle
 
 if __name__ == '__main__':
-  artist = Artist()
+  # artist = Artist()
   # artist.MoveTurtlebot()
 
   # TEST
@@ -275,23 +282,62 @@ if __name__ == '__main__':
   # for p in triangle:
   #   artist.Move(p)
 
-  img = cv2.imread('amg.png')
+#   img = cv2.imread('lma.png')
+  img = cv2.imread('car.jpeg')
   height, width, channels = img.shape
   canvas = np.ones((height, width, channels)) * 255
 
   # processor = Processor()
 
+#   def show_img(img: np.ndarray) -> None:
+#     # Display the modified image
+#     cv2.imshow(f'Image (Press 0 to Exit)', img)
+#     cv2.waitKey(0)  # Wait for a key press to close the window
+#     cv2.destroyAllWindows()
+
   grayscale_img = Processor.ColorToGrayscale(img)
+#   show_img(grayscale_img)
   adjusted_img = Processor.AdjustContrast(grayscale_img)
+#   show_img(adjusted_img)
   blurred_img = Processor.GaussianBlur(adjusted_img)
+#   show_img(blurred_img)
   edge_img = Processor.EdgeDetection(blurred_img)
+#   show_img(edge_img)
   
   contours = Processor.GetContours(edge_img)
   filtered_contours = Processor.FilterContours(contours, 0.5, 10)
   approx_contours = Processor.ApproxContours(filtered_contours, 5)
 
-  c1 = Planner.GetNextContour(np.array([[124, 34]]), approx_contours)
-  print(c1)
-  for p in c1:
-    artist.Move(p)
+  path = Planner.PathPlan(approx_contours)
+  print(path[0].shape)
+
+
+
+  # Define the coordinates of the two points
+  x1, y1 = 1, 1
+  x2, y2 = 50, 50
+
+  # Create a blank white image (or you can load an existing image)
+  canvas = np.ones((height, width, channels)) * 255
+
+  for i in range(len(path) - 1):
+      curr_x, curr_y = (path[i][0, 0], path[i][0, 1])
+      next_x, next_y = (path[i + 1][0, 0], path[i + 1][0, 1])
+      
+      # Draw a black line between the points (BGR format: Blue, Green, Red)
+      color = (0, 0, 0)  # Red color in BGR
+      thickness = 2        # Thickness of the line
+      cv2.line(canvas, (curr_x, curr_y), (next_x, next_y), color, thickness)
+
+  # Show the image with the line
+  cv2.imshow('Path Plan', canvas)
+
+  # Wait for a key press and close the window
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
+
+  # c1 = Planner.GetNextContour(np.array([[124, 34]]), approx_contours)
+  # print(c1)
+  # for p in c1:
+  #   artist.Move(p)
 
