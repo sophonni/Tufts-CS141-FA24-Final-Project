@@ -1,53 +1,42 @@
 import numpy as np
 
 class Planner:
-    def __init__(self):
-        pass
-
-    # Goal: Given a list of contours:
-    # - Identify the biggest contour (most points)
-    # - Pick a coordinate from the biggest contour (most points) as a start point
-    # - Finish tracing out the contour
-    # - Look through all the other contours and find a point that is closest to the last point in the current contour
-    # - Mark current contour as visited
-    # - trace out the new contour
-    # - REPEAT
-
-    # Given a list of contours
-    # Create a new list path
-    # path = biggest contour in the list of contours
-    # remove the biggest contour from the list of contours
-    # while the list of contours isn't empty:
-        # Take the coordinate we're currently at, compare it to all the points in all the contours
-        # Choose the closest point, add that contour point by point to path, then we delete the contour
-
+    @staticmethod
     def PathPlan(contours):
-        # currLen = 0
-        # bigContourIdx = 0
-        # for idx, c in enumerate(contours):
-        #     if len(c[1]) > currLen:
-        #         bigContourIdx 
+        curr_len = 0
+        big_contour_idx = 0
+        for idx, c in enumerate(contours):
+            if c.shape[0] > curr_len:
+                big_contour_idx = idx
+        big_contour = contours[big_contour_idx]
+        init_coord = big_contour[0][0]
 
-        longest_idx = np.argmax([c[1].shape[0] for c in contours])
-        path = contours[longest_idx]
-        np.delete(contours, longest_idx)
-        print("Contours:")
+        # updated_contour_list = np.delete(contours, big_contour_idx, axis=0)
+        del contours[big_contour_idx]
+        path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
+        while len(contours) != 0:
+          next_contour = Planner.GetNextContour(init_coord, contours)
+          path = np.vstack((path, next_contour))
+          init_coord = next_contour[0][0]
 
         return path
 
     # Given a coordinate pair and a list of contours, return the index of the contour and also the rearranged coordinates of this new contours
+    @staticmethod
     def GetNextContour(coords, contours):
         closest_distance = np.linalg.norm(contours[0][0] - coords)
-        closest_contour = contours[0]
+        closest_contour_idx = 0
         closest_coords_idx = 0
-        for c in enumerate(contours):
-            for idx, p in enumerate(c[1]):
+        for ci, c in enumerate(contours):
+            for pi, p in enumerate(c):
                 distance = np.linalg.norm(p - coords)
                 if distance < closest_distance:
-                    closest_coords_idx = idx
+                    closest_coords_idx = pi
                     closest_distance = distance
-                    closest_contour = c[1]
+                    closest_contour_idx = ci
 
+        
         # rearrange coordinate
-        rearranged_contour = np.roll(closest_contour, (-1 * closest_coords_idx), axis=0)
+        rearranged_contour = np.roll(contours[closest_contour_idx], (-1 * closest_coords_idx), axis=0)
+        del contours[closest_contour_idx]
         return np.append(rearranged_contour, rearranged_contour[0][np.newaxis, ...], axis=0)
