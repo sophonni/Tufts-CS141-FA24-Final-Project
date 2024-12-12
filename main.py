@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 def main():
-    img = cv2.imread('amg.png')
+    img = cv2.imread('cart.jpg')
     height, width, channels = img.shape
     canvas = np.ones((height, width, channels)) * 255
 
@@ -32,7 +32,8 @@ def main():
     #     cv2.destroyAllWindows()
     
 
-    path = Planner.PathPlan(approx_contours)
+    path = Planner.PathPlan(approx_contours, np.array([[0, 0]]))
+    # print(path)
     # Create a blank white image (or you can load an existing image)
     canvas = np.ones((height, width, channels)) * 255
 

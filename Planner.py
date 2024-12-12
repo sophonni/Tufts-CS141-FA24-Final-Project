@@ -2,18 +2,21 @@ import numpy as np
 
 class Planner:
     @staticmethod
-    def PathPlan(contours):
-        curr_len = 0
-        big_contour_idx = 0
-        for idx, c in enumerate(contours):
-            if c.shape[0] > curr_len:
-                big_contour_idx = idx
-        big_contour = contours[big_contour_idx]
-        init_coord = big_contour[0][0]
+    def PathPlan(contours, init_coord):
+        # curr_len = 0
+        # big_contour_idx = 0
+        # for idx, c in enumerate(contours):
+        #     if c.shape[0] > curr_len:
+        #         big_contour_idx = idx
+        # big_contour = contours[big_contour_idx]
+        # init_coord = big_contour[0][0]
 
         # updated_contour_list = np.delete(contours, big_contour_idx, axis=0)
-        del contours[big_contour_idx]
-        path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
+        # del contours[big_contour_idx]
+        # path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
+        path = np.array([init_coord])
+        print("shape coord: ", init_coord.shape)
+        print("shape path: ", path.shape)
         while len(contours) != 0:
           next_contour = Planner.GetNextContour(init_coord, contours)
           path = np.vstack((path, next_contour))

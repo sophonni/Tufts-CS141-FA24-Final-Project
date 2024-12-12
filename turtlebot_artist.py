@@ -22,7 +22,7 @@ BLUE = 255
 PARTICLE_THICKNESS = 2
 PARTICLE_RADIUS = 1
 
-DIST_SCALE = 0.03125
+DIST_SCALE = 0.015625 # 1/64
 ANGLE_SCALE = 1.45
 
 class Processor:
@@ -88,17 +88,21 @@ class Processor:
 ####################################################################################################################################
 class Planner:
     @staticmethod
-    def PathPlan(contours):
-        curr_len = 0
-        big_contour_idx = 0
-        for idx, c in enumerate(contours):
-            if c.shape[0] > curr_len:
-                big_contour_idx = idx
-        big_contour = contours[big_contour_idx]
-        init_coord = big_contour[0][0]
+    def PathPlan(contours, init_coord):
+        # curr_len = 0
+        # big_contour_idx = 0
+        # for idx, c in enumerate(contours):
+        #     if c.shape[0] > curr_len:
+        #         big_contour_idx = idx
+        # big_contour = contours[big_contour_idx]
+        # init_coord = big_contour[0][0]
 
-        del contours[big_contour_idx]
-        path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
+        # updated_contour_list = np.delete(contours, big_contour_idx, axis=0)
+        # del contours[big_contour_idx]
+        # path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
+        path = np.array([init_coord])
+        # print("shape coord: ", init_coord.shape)
+        # print("shape path: ", path.shape)
         while len(contours) != 0:
           next_contour = Planner.GetNextContour(init_coord, contours)
           path = np.vstack((path, next_contour))
@@ -147,7 +151,7 @@ class Odometer:
 
 ####################################################################################################################################
 class Artist:
-  def __init__(self):
+  def __init__(self, init_pos):
     rospy.init_node('turtlebot_artist', anonymous=True)
 
     self.velocity_publisher = rospy.Publisher('/cmd_vel_mux/input/navi', Twist, queue_size=10)
@@ -157,7 +161,7 @@ class Artist:
 
     self.vel_msg = Twist()
 
-    self.curr_pos = np.array([[124, 34]])
+    self.curr_pos = init_pos
     self.curr_angle = 0
 
     self.listener = Odometer()
@@ -220,10 +224,11 @@ class Artist:
     print("Odometer pose:", self.listener.pose)
 
 if __name__ == '__main__':
-  artist = Artist()
+  init_pos = np.array([[0, 0]])
+  artist = Artist(init_pos)
 
   square = np.array([np.array([[2, 0]]), np.array([[2, 2]]), np.array([[0, 2]]), np.array([[0, 0]])])
-  triangle = np.array([np.array([[4, 0]]), np.array([[4, 4]]), np.array([[0, 0]])])
+  triangle = np.array([np.array([[100, 0]]), np.array([[100, 100]]), np.array([[0, 0]])])
 
   # for p in square:
   #   artist.Move(p)
@@ -243,10 +248,15 @@ if __name__ == '__main__':
   filtered_contours = Processor.FilterContours(contours, 0.5, 10)
   approx_contours = Processor.ApproxContours(filtered_contours, 5)
 
-  path = Planner.PathPlan(approx_contours)
-  print("Odometer pose:", artist.listener.pose)
-  for i in range(10):
-    artist.Move(path[i])
+  path = Planner.PathPlan(approx_contours, init_pos)
+  # print(path)
+  # print("Odometer pose:", artist.listener.pose)
+  # for i in range(10):
+  #   artist.Move(path[i])
+  for p in path:
+     artist.Move(p)
+  # artist.Move(np.array([[100, 0]]))
+  # print("Odometer pose:", artist.listener.pose)
   
   artist.listener.stop()
   artist.listener_thread.join()
