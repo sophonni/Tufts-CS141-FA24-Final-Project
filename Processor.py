@@ -36,9 +36,10 @@ class Processor:
     
     # Purpose: Detect edges using Canny Edge Detection
     @staticmethod
-    def EdgeDetection(img):
-        edge_img = cv2.Canny(image=img, threshold1=50, threshold2=150)
-        return edge_img    
+    def EdgeDetection(img, t1=50, t2=150):
+        # Perform edge detection using Canny
+        edge_img = cv2.Canny(img, t1, t2)
+        return edge_img
     
     @staticmethod
     def GetContours(img):
