@@ -15,8 +15,8 @@ class Planner:
         # del contours[big_contour_idx]
         # path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
         path = np.array([init_coord])
-        print("shape coord: ", init_coord.shape)
-        print("shape path: ", path.shape)
+        # print("shape coord: ", init_coord.shape)
+        # print("shape path: ", path.shape)
         while len(contours) != 0:
           next_contour = Planner.GetNextContour(init_coord, contours)
           path = np.vstack((path, next_contour))
