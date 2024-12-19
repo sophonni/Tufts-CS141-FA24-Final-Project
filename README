@@ -28,7 +28,7 @@ Used Libraries and How to Install
 Command References
     python turtlebot_artist.py: This command initiates image processing,
                                 generates the path plan, and controls the
-                                robot to traverse the path (used for testingwith the robot).
+                                robot to traverse the path (used for testing with the robot).
     python3 main.py: This command initiates image processing, generates the
                     path plan, and visualizes the subsequent procedures (semi-test without the robot).
 

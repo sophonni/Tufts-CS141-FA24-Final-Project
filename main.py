@@ -38,8 +38,8 @@ def main():
     and generates plots to visualize the effects of different processing thresholds.
     """
 
-    # Load the image (e.g., trumpet.jpeg)
-    img = cv2.imread('trumpet.jpeg')
+    # Load the image (e.g., trumpet.png)
+    img = cv2.imread('trumpet.png')
 
     # Get image dimensions (height, width, channels) and create a blank canvas
     height, width, channels = img.shape
@@ -47,15 +47,19 @@ def main():
 
     # Convert the image to grayscale
     grayscale_img = Processor.ColorToGrayscale(img)
+    show_img(grayscale_img)
 
     # Adjust contrast and brightness of the grayscale image
     adjusted_img = Processor.AdjustContrast(grayscale_img)
+    show_img(adjusted_img)
 
     # Apply Gaussian blur to reduce noise
     blurred_img = Processor.GaussianBlur(adjusted_img)
+    show_img(blurred_img)
 
     # Perform edge detection using Canny edge detection
     edge_img = Processor.EdgeDetection(blurred_img)
+    show_img(edge_img)
 
     # Extract contours from the edge-detected image
     contours = Processor.GetContours(edge_img)
