@@ -1,3 +1,33 @@
+"""
+File: planner.py
+Authors: Sophonni Dy, Sam Youkeles
+Date: 12-29-24
+
+Description:
+    This file contains the `Planner` class which is responsible for path planning
+    based on contours extracted from an image. The `PathPlan` function generates a 
+    sequence of coordinates that outlines a path starting from an initial position.
+    The `GetNextContour` function helps find the closest contour to the current 
+    position and rearranges it such that the closest point is at the start.
+    
+    The main purpose of this class is to process contours and generate a navigable 
+    path for a robot or other agent. This can be used in robotics, computer vision, 
+    and similar fields where path planning is needed.
+
+Usage:
+    1. `PathPlan` requires a list of contours (each contour being a sequence of points)
+       and an initial coordinate. It will return a path as a series of coordinates.
+    2. `GetNextContour` helps find and rearrange the next closest contour to the current position.
+
+Dependencies:
+    - numpy: For handling coordinate arrays and calculations.
+
+Example:
+    contours = [...]  # A list of contours (each a list of points)
+    initial_coord = np.array([[0, 0]])  # Starting position
+    path = Planner.PathPlan(contours, initial_coord)
+"""
+
 import numpy as np
 
 class Planner:

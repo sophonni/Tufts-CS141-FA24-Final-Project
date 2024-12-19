@@ -1,3 +1,43 @@
+"""
+File: processor.py
+Authors: Sophonni Dy, Sam Youkeles
+Date: 12-19-24
+
+Description:
+    This file contains the `Processor` class, which includes various image 
+    processing methods such as color-to-grayscale conversion, contrast adjustment, 
+    Gaussian blurring, edge detection, and contour analysis. These methods can 
+    be used sequentially to prepare an image for further processing in computer vision 
+    tasks, such as object detection and path planning.
+    
+    The `Processor` class provides static methods that operate on images (as numpy arrays), 
+    making it easy to chain operations like contrast adjustment, Gaussian blurring, 
+    and edge detection to extract contours or features from an image.
+
+Usage:
+    1. `ColorToGrayscale`: Converts a BGR image to grayscale.
+    2. `AdjustContrast`: Adjusts the contrast and brightness of an image.
+    3. `GaussianBlur`: Applies a Gaussian blur to the image to reduce noise.
+    4. `EdgeDetection`: Detects edges in the image using the Canny edge detector.
+    5. `GetContours`: Finds contours in a binary image.
+    6. `FilterContours`: Filters out duplicate contours based on shape similarity and distance.
+    7. `ApproxContours`: Approximates the contours to polygons based on the specified threshold.
+
+Dependencies:
+    - numpy: Used for handling images as numpy arrays.
+    - cv2: OpenCV library used for image processing tasks.
+
+Example:
+    img = cv2.imread('image.jpg')
+    grayscale_img = Processor.ColorToGrayscale(img)
+    contrast_img = Processor.AdjustContrast(grayscale_img)
+    blurred_img = Processor.GaussianBlur(contrast_img)
+    edge_img = Processor.EdgeDetection(blurred_img)
+    contours = Processor.GetContours(edge_img)
+    filtered_contours = Processor.FilterContours(contours, 0.5, 10)
+    approx_contours = Processor.ApproxContours(filtered_contours, 5)
+"""
+
 import cv2
 import numpy as np
 

@@ -1,4 +1,51 @@
 #!/user/bin/env python
+
+"""
+File: turtlebot_artist.py
+Authors: Sophonni Dy, Sam Youkeles
+Date: [Date]
+
+Description:
+    This script is designed to control a TurtleBot (or any similar robot) by combining image processing, 
+    path planning, and ROS-based movement control. It processes an image to extract contours, plans a 
+    path through those contours, and then uses the TurtleBot to follow the path based on odometry and 
+    velocity commands.
+
+    The script leverages several classes for different tasks:
+    1. `Processor`: Performs image processing tasks such as converting to grayscale, applying Gaussian blur,
+       detecting edges, finding and filtering contours.
+    2. `Planner`: Plans a navigable path through a series of contours, starting from an initial position.
+    3. `Odometer`: Handles odometry data from the `/odom` ROS topic to track the robot’s pose in real-time.
+    4. `Artist`: Controls the movement of the robot by publishing velocity commands, and uses the `Odometer` 
+       to track the robot's position and orientation as it moves.
+
+    The main function of the script loads an image, processes it, generates a path from the contours, 
+    and drives the robot along that path using ROS.
+
+Usage:
+    1. ROS setup should be complete, with the TurtleBot connected and running.
+    2. The script starts by initializing the robot's position, then loads and processes an image.
+    3. The robot's path is computed based on the contours found in the image, and it moves accordingly.
+
+Dependencies:
+    - rospy: For communication with ROS and publishing velocity commands.
+    - numpy: For handling coordinate data and movement calculations.
+    - opencv-python (cv2): For image processing tasks like edge detection, contour finding, and filtering.
+    - math: For mathematical calculations (such as calculating Euclidean distance and angles).
+    - threading: To handle the odometer listener in a separate thread.
+
+Example:
+    To run this script:
+    1. Ensure the robot is powered on and connected via ROS.
+    2. Place the script in the ROS workspace and run it to control the TurtleBot to navigate along the path.
+    3. The robot will follow the contours of the image, moving and rotating as necessary.
+
+Note:
+    This script assumes that the ROS topic `/odom` is available for odometry data and that the TurtleBot is 
+    set up to listen to the `/cmd_vel_mux/input/navi` topic for velocity commands.
+"""
+
+
 import rospy
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry

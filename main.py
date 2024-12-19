@@ -1,3 +1,30 @@
+"""
+File: processor.py
+Authors: Sophonni Dy, Sam Youkeles
+Date: 12-19-24
+
+Description:
+    This script performs a series of image processing and path planning operations, including:
+        1. Loading and preprocessing an image (grayscale conversion, contrast adjustment, Gaussian blur).
+        2. Performing edge detection and extracting contours from the image.
+        3. Filtering, approximating, and path planning through the contours.
+        4. Evaluating the effect of various processing thresholds on image complexity and accuracy.
+        5. Visualizing the results through plots and displaying images using OpenCV.
+
+Usage:
+    1. Ensure all dependencies are installed (e.g., NumPy, OpenCV, Matplotlib, scikit-image).
+    2. Place the input image (e.g., 'trumpet.jpeg') in the same directory.
+    3. Run the script to generate processed images and analysis plots.
+        
+Dependencies:
+    - Processor.py (custom module for image processing)
+    - Planner.py (custom module for path planning)
+    - NumPy (for numerical operations)
+    - OpenCV (for image manipulation and display)
+    - Matplotlib (for graphing results)
+    - scikit-image (for Structural Similarity Index (SSIM) computation)
+"""
+
 from Processor import Processor
 from Planner import Planner
 import numpy as np
