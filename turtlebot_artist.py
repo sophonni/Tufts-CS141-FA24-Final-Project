@@ -89,20 +89,7 @@ class Processor:
 class Planner:
     @staticmethod
     def PathPlan(contours, init_coord):
-        # curr_len = 0
-        # big_contour_idx = 0
-        # for idx, c in enumerate(contours):
-        #     if c.shape[0] > curr_len:
-        #         big_contour_idx = idx
-        # big_contour = contours[big_contour_idx]
-        # init_coord = big_contour[0][0]
-
-        # updated_contour_list = np.delete(contours, big_contour_idx, axis=0)
-        # del contours[big_contour_idx]
-        # path = np.append(big_contour, big_contour[0][np.newaxis, ...], axis=0)
         path = np.array([init_coord])
-        # print("shape coord: ", init_coord.shape)
-        # print("shape path: ", path.shape)
         while len(contours) != 0:
           next_contour = Planner.GetNextContour(init_coord, contours)
           path = np.vstack((path, next_contour))
@@ -196,7 +183,6 @@ class Artist:
     self.StopRobot()
     rospy.loginfo("Info: Rotation Completed")
     
-
   def StopRobot(self):
     self.vel_msg.linear.x = 0.0
     self.vel_msg.angular.z = 0.0
@@ -227,15 +213,6 @@ if __name__ == '__main__':
   init_pos = np.array([[0, 0]])
   artist = Artist(init_pos)
 
-  square = np.array([np.array([[2, 0]]), np.array([[2, 2]]), np.array([[0, 2]]), np.array([[0, 0]])])
-  triangle = np.array([np.array([[100, 0]]), np.array([[100, 100]]), np.array([[0, 0]])])
-
-  # for p in square:
-  #   artist.Move(p)
-  
-  # for p in triangle:
-  #   artist.Move(p)
-
   img = cv2.imread('amg.png')
   height, width, channels = img.shape
 
@@ -249,20 +226,8 @@ if __name__ == '__main__':
   approx_contours = Processor.ApproxContours(filtered_contours, 5)
 
   path = Planner.PathPlan(approx_contours, init_pos)
-  # print(path)
-  # print("Odometer pose:", artist.listener.pose)
-  # for i in range(10):
-  #   artist.Move(path[i])
   for p in path:
      artist.Move(p)
-  # artist.Move(np.array([[100, 0]]))
-  # print("Odometer pose:", artist.listener.pose)
   
   artist.listener.stop()
   artist.listener_thread.join()
-
-  # c1 = Planner.GetNextContour(np.array([[124, 34]]), approx_contours)
-  # print(c1)
-  # for p in c1:
-  #   print(p)
-    # artist.Move(p)

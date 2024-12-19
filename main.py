@@ -26,43 +26,9 @@ def main():
     contours = Processor.GetContours(edge_img)
     filtered_contours = Processor.FilterContours(contours, 0.5, 10)
     approx_contours = Processor.ApproxContours(filtered_contours, 5)
-    # for contour in approx_contours:
-    #     print(contour.shape)
-    #     cv2.drawContours(canvas, [contour], 0, (0, 255, 0), 2)
-    #     cv2.imshow("Contour",canvas)
-    #     cv2.waitKey(0)
-    #     cv2.destroyAllWindows()
     
 
     path = Planner.PathPlan(approx_contours, np.array([[0, 0]]))
-    # drawn_path = DrawPath(img, path)
-    # # Show the image with the line
-    # cv2.imshow('Path Plan', drawn_path)
-    # # Wait for a key press and close the window
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    
-    # # print(path)
-    # # Create a blank white image (or you can load an existing image)
-    # canvas = np.ones((height, width, channels)) * 255
-
-    # for i in range(len(path) - 1):
-    #     curr_x, curr_y = (path[i][0, 0], path[i][0, 1])
-    #     next_x, next_y = (path[i + 1][0, 0], path[i + 1][0, 1])
-        
-    #     # Draw a black line between the points (BGR format: Blue, Green, Red)
-    #     color = (0, 0, 0)  # Red color in BGR
-    #     thickness = 2        # Thickness of the line
-    #     cv2.line(canvas, (curr_x, curr_y), (next_x, next_y), color, thickness)
-
-    # # Show the image with the line
-    # cv2.imshow('Path Plan', canvas)
-
-    # # Wait for a key press and close the window
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
-
 
     low_bound = 0
     up_bound = 10
@@ -92,23 +58,6 @@ def show_img(img: np.ndarray) -> None:
     cv2.waitKey(0)  # Wait for a key press to close the window
     cv2.destroyAllWindows()
 
-# def plot_graph_with_dots(x, y, x_lable_str, title_str):
-
-#     # Create the plot
-#     plt.figure(figsize=(10, 6))
-#     plt.plot(x, y, marker='o', linestyle='-', color='b')
-
-#     # # Set x-axis to integer scale
-#     # plt.xticks(np.arange(min(x), max(x) + 1, step_val))  # Ensure all x ticks are integers
-
-#     # Add titles and labels
-#     plt.title(title_str)
-#     plt.xlabel(x_lable_str)
-#     plt.ylabel('Number of Points')
-
-#     plt.grid()
-#     plt.show()
-
 def plot_graph_without_dots(x, y, x_label_str, y_label_str, title_str, scale=None):
     # Create the plot
     plt.figure(figsize=(10, 6))
@@ -117,8 +66,7 @@ def plot_graph_without_dots(x, y, x_label_str, y_label_str, title_str, scale=Non
     # # Set x-axis to integer scale
     if scale:
         plt.xscale(scale)
-    # plt.xticks(np.arange(min(x), max(x) + 1, step_val))  # Ensure all x ticks are integers
-
+        
     # Add titles and labels
     plt.title(title_str)
     plt.xlabel(x_label_str)
